@@ -1,0 +1,37 @@
+name: CCUsageViewer
+options:
+  createIntermediateGroups: true
+settings:
+  base:
+    PRODUCT_BUNDLE_IDENTIFIER: com.vkuznetsov.CCUsageViewer
+    SWIFT_VERSION: 6.0
+    MACOSX_DEPLOYMENT_TARGET: "15.0"
+    DEVELOPMENT_TEAM: ""
+targets:
+  CCUsageViewer:
+    type: application
+    platform: macOS
+    sources:
+      - path: CCUsageViewer
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: CC Usage Viewer
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.developer-tools
+        INFOPLIST_KEY_LSUIElement: YES
+        INFOPLIST_KEY_NSHumanReadableCopyright: ""
+        INFOPLIST_KEY_NSPrincipalClass: NSApplication
+        PRODUCT_NAME: CCUsageViewer
+    scheme:
+      testTargets:
+        - CCUsageViewerTests
+  CCUsageViewerTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: CCUsageViewerTests
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: CCUsageViewer

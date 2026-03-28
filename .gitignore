@@ -1,0 +1,10 @@
+.DS_Store
+build/
+DerivedData/
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+
+CCUsageViewer.xcodeproj/project.xcworkspace/xcuserdata/
+CCUsageViewer.xcodeproj/xcuserdata/
+
