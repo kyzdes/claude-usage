@@ -1,13 +1,14 @@
+import AppKit
 import SwiftUI
 
 struct MenuBarContentView: View {
+    @Environment(\.dismiss) private var dismiss
     @Bindable var appModel: AppModel
     let viewModel: LimitViewModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             header
-            Divider()
             content
             Divider()
             footer
@@ -21,12 +22,9 @@ struct MenuBarContentView: View {
 
     private var header: some View {
         HStack(alignment: .top) {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 0) {
                 Text(viewModel.snapshot?.displayPlanName ?? "Claude subscription")
                     .font(.headline)
-                Text(viewModel.freshnessText)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
             }
 
             Spacer()
@@ -90,11 +88,19 @@ struct MenuBarContentView: View {
                 }
                 .disabled(viewModel.isRefreshing)
 
-                SettingsLink {
-                    Text("Settings…")
+                Button("Close") {
+                    dismiss()
+                }
+
+                Button("Quit") {
+                    NSApp.terminate(nil)
                 }
 
                 Spacer()
+
+                SettingsLink {
+                    Text("Settings…")
+                }
             }
         }
     }

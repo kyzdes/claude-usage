@@ -81,6 +81,7 @@ final class LimitViewModel {
                 screenText: capture.screenText,
                 capturedAt: capture.capturedAt
             )
+            .applyingPlanHint(capture.observedPlanName)
 
             snapshot = parsedSnapshot
             lastGoodSnapshot = parsedSnapshot
@@ -112,16 +113,6 @@ final class LimitViewModel {
         }
 
         return Date().timeIntervalSince(referenceDate) > Double(appModel.staleThresholdMinutes * 60)
-    }
-
-    var freshnessText: String {
-        guard let referenceDate = snapshot?.capturedAt ?? lastGoodSnapshot?.capturedAt else {
-            return "No successful capture yet"
-        }
-
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .short
-        return "Updated \(formatter.localizedString(for: referenceDate, relativeTo: .now))"
     }
 
     var menuBarTitle: String {

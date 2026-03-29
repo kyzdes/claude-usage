@@ -75,6 +75,7 @@ struct ClaudeUsageCaptureService: ClaudeUsageCaptureServiceProtocol, Sendable {
         let session = try startClaudeSession(executablePath: executablePath, workingDirectory: workingDirectory)
         var parser = ANSIStreamParser(width: Int(columns), height: Int(rows))
         var stateMachine = CaptureFlowStateMachine(now: .now)
+        var observedPlanName: String?
         let captureStart = Date()
 
         defer {
@@ -92,6 +93,7 @@ struct ClaudeUsageCaptureService: ClaudeUsageCaptureServiceProtocol, Sendable {
             }
 
             let screenText = parser.screenBuffer.renderedText()
+            observedPlanName = observedPlanName ?? Self.extractPlanHint(from: screenText)
             if screenText.isEmpty, waitForProcessExit(processID: session.processID, shouldBlock: false) != nil {
                 throw ClaudeUsageCaptureError.emptyCapture
             }
@@ -108,7 +110,8 @@ struct ClaudeUsageCaptureService: ClaudeUsageCaptureServiceProtocol, Sendable {
                         capturedAt: now,
                         screenText: screenText,
                         rawScreenLines: parser.screenBuffer.renderedLines(),
-                        sourceState: screenText.lowercased().contains("current session") ? .live : .partial
+                        sourceState: screenText.lowercased().contains("current session") ? .live : .partial,
+                        observedPlanName: observedPlanName
                     )
                 }
             }
@@ -124,7 +127,8 @@ struct ClaudeUsageCaptureService: ClaudeUsageCaptureServiceProtocol, Sendable {
                         capturedAt: now,
                         screenText: screenText,
                         rawScreenLines: parser.screenBuffer.renderedLines(),
-                        sourceState: .partial
+                        sourceState: .partial,
+                        observedPlanName: observedPlanName
                     )
                 }
 
@@ -135,6 +139,38 @@ struct ClaudeUsageCaptureService: ClaudeUsageCaptureServiceProtocol, Sendable {
         }
 
         throw ClaudeUsageCaptureError.timeout(stateMachine.phase, parser.screenBuffer.renderedText())
+    }
+
+    static func extractPlanHint(from screenText: String) -> String? {
+        let patterns = [
+            #"(?i)\bclaude\s+(max|pro)\b"#,
+            #"(?i)\b(max|pro)\s+plan\b"#
+        ]
+
+        for pattern in patterns {
+            guard let regex = try? NSRegularExpression(pattern: pattern) else {
+                continue
+            }
+
+            let range = NSRange(location: 0, length: screenText.utf16.count)
+            guard let match = regex.firstMatch(in: screenText, options: [], range: range),
+                  let resultRange = Range(match.range, in: screenText) else {
+                continue
+            }
+
+            let rawValue = String(screenText[resultRange])
+                .replacingOccurrences(of: "plan", with: "", options: .caseInsensitive)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .capitalized
+
+            if rawValue.lowercased().hasPrefix("claude ") {
+                return rawValue
+            }
+
+            return "Claude \(rawValue)"
+        }
+
+        return nil
     }
 
     private func shouldTimeout(phase: CaptureFlowPhase, now: Date, phaseEnteredAt: Date) -> Bool {

@@ -28,6 +28,23 @@ struct SubscriptionLimitSnapshot: Equatable, Sendable {
     let weeklyLimit: LimitSection?
     let rawText: String
     let isPartial: Bool
+
+    func applyingPlanHint(_ observedPlanName: String?) -> SubscriptionLimitSnapshot {
+        guard planName == "Unknown Plan",
+              let observedPlanName,
+              !observedPlanName.isEmpty else {
+            return self
+        }
+
+        return SubscriptionLimitSnapshot(
+            capturedAt: capturedAt,
+            planName: observedPlanName,
+            currentSession: currentSession,
+            weeklyLimit: weeklyLimit,
+            rawText: rawText,
+            isPartial: isPartial
+        )
+    }
 }
 
 struct UsageCaptureResult: Equatable, Sendable {
@@ -35,4 +52,5 @@ struct UsageCaptureResult: Equatable, Sendable {
     let screenText: String
     let rawScreenLines: [String]
     let sourceState: CaptureSourceState
+    let observedPlanName: String?
 }

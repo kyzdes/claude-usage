@@ -51,4 +51,26 @@ final class CaptureFlowStateMachineTests: XCTestCase {
         XCTAssertEqual(actions.first, .sendUsage)
         XCTAssertEqual(stateMachine.phase, .awaitingUsageScreen)
     }
+
+    func testCaptureServiceExtractsPlanHintFromWelcomeScreen() {
+        let planName = ClaudeUsageCaptureService.extractPlanHint(
+            from: "Claude Code\nClaude Max\n/help for help"
+        )
+
+        XCTAssertEqual(planName, "Claude Max")
+    }
+
+    func testCaptureServiceLeavesPlanHintEmptyWhenUsageScreenHasNoPlan() {
+        let planName = ClaudeUsageCaptureService.extractPlanHint(
+            from: """
+            kyzdes5@gmail.com's Organization
+
+            Current session
+            22% used
+            Resets 3am (Europe/Moscow)
+            """
+        )
+
+        XCTAssertNil(planName)
+    }
 }

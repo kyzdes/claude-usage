@@ -1,5 +1,6 @@
 .DS_Store
 build/
+dist/
 DerivedData/
 *.xcuserstate
 *.xccheckout
@@ -7,4 +8,3 @@ DerivedData/
 
 CCUsageViewer.xcodeproj/project.xcworkspace/xcuserdata/
 CCUsageViewer.xcodeproj/xcuserdata/
-
