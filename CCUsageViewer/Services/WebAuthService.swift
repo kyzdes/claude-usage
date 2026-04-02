@@ -1,9 +1,6 @@
 import Foundation
 import AppKit
 import WebKit
-import os.log
-
-private let logger = Logger(subsystem: "com.vkuznetsov.CCUsageViewer", category: "WebAuth")
 
 @MainActor
 final class WebAuthService: NSObject, ObservableObject {
@@ -16,7 +13,7 @@ final class WebAuthService: NSObject, ObservableObject {
     private var loginWindow: NSWindow?
     private var webView: WKWebView?
     private var cookieStore: WKHTTPCookieStore?
-    private var pollingTask: Task<Void, Never>?
+    private var isPolling = false
     private var alreadyCaptured = false
 
     init(
@@ -30,10 +27,6 @@ final class WebAuthService: NSObject, ObservableObject {
     }
 
     func startLogin() {
-        // Debug: write to file immediately to confirm this is called
-        let debugLine = "[\(Date())] startLogin TOP\n"
-        try? debugLine.write(toFile: "/tmp/ccusage_auth.log", atomically: false, encoding: .utf8)
-
         closeLoginWindow()
 
         isAuthenticating = true
@@ -91,22 +84,19 @@ final class WebAuthService: NSObject, ObservableObject {
         NSApp.activate(ignoringOtherApps: true)
         self.loginWindow = window
 
-        let url = URL(string: "https://claude.ai/login")!
-        wv.load(URLRequest(url: url))
-
-        debugLog("startLogin() called — window opened, starting polling task")
-        cookieStore?.add(self)
-        pollingTask?.cancel()
-        let pollingWebView = wv
-        let pollingCookieStore = self.cookieStore
-        pollingTask = Task { @MainActor [weak self] in
-            while !Task.isCancelled {
-                try? await Task.sleep(nanoseconds: 2_000_000_000)
-                guard !Task.isCancelled else { return }
-                // Use strong refs to webView/cookieStore captured at creation
-                self?.pollForLogin(webView: pollingWebView, cookieStore: pollingCookieStore)
+        // Clear old claude.ai cookies first, then load login page
+        Task {
+            let allCookies = await config.websiteDataStore.httpCookieStore.allCookies()
+            for cookie in allCookies where cookie.domain.contains("claude.ai") {
+                await config.websiteDataStore.httpCookieStore.deleteCookie(cookie)
             }
+            // Now load login page (fresh, no cached session)
+            wv.load(URLRequest(url: URL(string: "https://claude.ai/login")!))
         }
+
+        // Start polling (only method — no cookie observer)
+        isPolling = true
+        scheduleNextPoll(webView: wv, cookieStore: self.cookieStore)
     }
 
     func logout() {
@@ -127,25 +117,21 @@ final class WebAuthService: NSObject, ObservableObject {
         storage.getSessionKey() != nil && storage.getOrganizationId() != nil
     }
 
-    // MARK: - Polling (Timer-based, guaranteed to fire on main run loop)
+    // MARK: - Polling (DispatchQueue-based)
 
-    private func debugLog(_ msg: String) {
-        let line = "[\(Date())] \(msg)\n"
-        let path = "/tmp/ccusage_auth.log"
-        if let fh = FileHandle(forWritingAtPath: path) {
-            fh.seekToEndOfFile()
-            fh.write(line.data(using: .utf8)!)
-            fh.closeFile()
-        } else {
-            FileManager.default.createFile(atPath: path, contents: line.data(using: .utf8))
+    private func scheduleNextPoll(webView: WKWebView, cookieStore: WKHTTPCookieStore?) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+            guard let self, self.isPolling, !self.alreadyCaptured else { return }
+            self.pollForLogin(webView: webView, cookieStore: cookieStore)
+            if self.isPolling && !self.alreadyCaptured {
+                self.scheduleNextPoll(webView: webView, cookieStore: cookieStore)
+            }
         }
     }
 
     private func pollForLogin(webView: WKWebView, cookieStore: WKHTTPCookieStore?) {
-        debugLog("pollForLogin called. alreadyCaptured=\(alreadyCaptured), url=\(webView.url?.absoluteString ?? "nil")")
-
         guard !alreadyCaptured else {
-            pollingTask?.cancel()
+            isPolling = false
             return
         }
 
@@ -153,30 +139,22 @@ final class WebAuthService: NSObject, ObservableObject {
               let host = url.host,
               host.contains("claude.ai"),
               !url.path.contains("login") else {
-            debugLog("pollForLogin: not on logged-in page yet")
-            return
+            return // Not on logged-in page yet
         }
 
-        debugLog("pollForLogin: on logged-in page! Trying to capture cookies...")
-
-        // We're on claude.ai and NOT on /login — user is logged in!
+        // User is on claude.ai and NOT on /login — they logged in!
         Task {
-            // Try cookie store first
             if let cookieStore {
                 let cookies = await cookieStore.allCookies()
-                let claudeCookies = cookies.filter { $0.domain.contains("claude.ai") }
-                debugLog("pollForLogin: found \(claudeCookies.count) claude.ai cookies")
-                if let sk = claudeCookies.first(where: { $0.name == "sessionKey" }) {
-                    debugLog("pollForLogin: found sessionKey cookie!")
+                if let sk = cookies.first(where: { $0.name == "sessionKey" && $0.domain.contains("claude.ai") }) {
                     self.alreadyCaptured = true
-                    self.pollingTask?.cancel()
+                    self.isPolling = false
                     await self.handleCapturedSessionKey(sk.value)
                     return
                 }
             }
 
-            // Fallback: call /api/organizations from page context via JS
-            debugLog("pollForLogin: no sessionKey cookie, trying JS fallback...")
+            // Fallback: call API from page context via JS
             let js = """
             (async () => {
                 try {
@@ -195,23 +173,19 @@ final class WebAuthService: NSObject, ObservableObject {
                    let orgs = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]],
                    let firstOrg = orgs.first,
                    let orgId = firstOrg["uuid"] as? String ?? firstOrg["id"] as? String {
-                    debugLog("pollForLogin: JS fallback got orgId=\(orgId)")
                     self.alreadyCaptured = true
-                    self.pollingTask?.cancel()
+                    self.isPolling = false
                     await self.handleAuthenticatedSession(organizationId: orgId)
-                } else {
-                    debugLog("pollForLogin: JS fallback returned no valid orgs")
                 }
             } catch {
-                debugLog("pollForLogin: JS error: \(error)")
+                // Will retry next tick
             }
         }
     }
 
-    /// Called when we confirmed the session is authenticated via JS API call
+    // MARK: - Session handling
+
     private func handleAuthenticatedSession(organizationId: String) async {
-        // The WKWebView has a valid session. Extract the sessionKey cookie.
-        // First try WKHTTPCookieStore
         if let cookieStore {
             let cookies = await cookieStore.allCookies()
             if let sk = cookies.first(where: { $0.name == "sessionKey" && $0.domain.contains("claude.ai") }) {
@@ -225,33 +199,8 @@ final class WebAuthService: NSObject, ObservableObject {
             }
         }
 
-        // If cookie store doesn't give us sessionKey, use JS to make API call
-        // and store orgId — we'll use WKWebView-based fetching as fallback
-        // For now, try extracting from document.cookie (non-httpOnly cookies)
-        if let webView {
-            let cookieString = try? await webView.evaluateJavaScript("document.cookie") as? String
-            if let cookieString {
-                let pairs = cookieString.split(separator: ";").map { $0.trimmingCharacters(in: .whitespaces) }
-                for pair in pairs {
-                    let parts = pair.split(separator: "=", maxSplits: 1)
-                    if parts.count == 2 && parts[0] == "sessionKey" {
-                        let value = String(parts[1])
-                        try? storage.setSessionKey(value)
-                        storage.setOrganizationId(organizationId)
-                        isAuthenticated = true
-                        isAuthenticating = false
-                        authError = nil
-                        closeLoginWindow()
-                        return
-                    }
-                }
-            }
-        }
-
-        // Last resort: we confirmed the user is logged in, save orgId
-        // and mark as authenticated (the API service will use WKWebView cookies)
+        // Last resort: save orgId with placeholder key
         storage.setOrganizationId(organizationId)
-        // Store a placeholder — the actual requests will use the WKWebView's cookie store
         try? storage.setSessionKey("wkwebview-session-active")
         isAuthenticated = true
         isAuthenticating = false
@@ -282,30 +231,15 @@ final class WebAuthService: NSObject, ObservableObject {
     }
 
     private func closeLoginWindow() {
-        pollingTask?.cancel()
-        pollingTask = nil
-        cookieStore?.remove(self)
-        loginWindow?.close()
-        Task { @MainActor [weak self] in
-            try? await Task.sleep(nanoseconds: 500_000_000)
-            self?.loginWindow = nil
-            self?.webView = nil
-            self?.cookieStore = nil
-        }
-    }
-}
-
-// MARK: - WKHTTPCookieStoreObserver (instant cookie detection)
-
-extension WebAuthService: WKHTTPCookieStoreObserver {
-    nonisolated func cookiesDidChange(in cookieStore: WKHTTPCookieStore) {
-        Task { @MainActor [weak self] in
-            guard let self, !self.alreadyCaptured else { return }
-            // Cookie changed — check if sessionKey appeared
-            let cookies = await cookieStore.allCookies()
-            if let sk = cookies.first(where: { $0.name == "sessionKey" && $0.domain.contains("claude.ai") }) {
-                self.alreadyCaptured = true
-                await self.handleCapturedSessionKey(sk.value)
+        isPolling = false
+        let window = loginWindow
+        loginWindow = nil
+        webView = nil
+        cookieStore = nil
+        if let window {
+            DispatchQueue.main.async {
+                window.orderOut(nil)
+                window.close()
             }
         }
     }
@@ -317,17 +251,9 @@ extension WebAuthService: NSWindowDelegate {
     nonisolated func windowWillClose(_ notification: Notification) {
         Task { @MainActor [weak self] in
             guard let self else { return }
-            self.pollingTask?.cancel()
-            self.pollingTask = nil
-            self.cookieStore?.remove(self)
+            self.isPolling = false
             if !self.isAuthenticated {
                 self.isAuthenticating = false
-            }
-            Task { @MainActor [weak self] in
-                try? await Task.sleep(nanoseconds: 500_000_000)
-                self?.loginWindow = nil
-                self?.webView = nil
-                self?.cookieStore = nil
             }
         }
     }
@@ -353,10 +279,6 @@ extension WebAuthService: WKUIDelegate {
 // MARK: - WKNavigationDelegate
 
 extension WebAuthService: WKNavigationDelegate {
-    nonisolated func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        // didFinish triggers URL polling check on next cycle
-    }
-
     nonisolated func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         if (error as NSError).code == NSURLErrorCancelled { return }
         Task { @MainActor [weak self] in
