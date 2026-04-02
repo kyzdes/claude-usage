@@ -123,7 +123,23 @@
 
 ---
 
-## D-014: Zero external dependencies
+## D-014: Remove WKHTTPCookieStoreObserver, use DispatchQueue polling only
+**Дата:** 2026-04-02
+**Контекст:** Cookie observer срабатывал мгновенно при добавлении (cookies от прошлой сессии в `.default()` store), закрывая окно до того как пользователь мог залогиниться.
+**Решение:** Убрать observer полностью. Использовать только `DispatchQueue.main.asyncAfter` polling каждые 2с. Перед загрузкой login page — очищать все claude.ai cookies.
+**Причина:** Observer не различает "старые cookies от прошлого логина" и "новые cookies от текущего логина". Polling проверяет URL (не /login) + cookies — это надёжно определяет свежий логин.
+
+---
+
+## D-015: SessionKeyStorage — UserDefaults вместо Keychain
+**Дата:** 2026-04-02
+**Контекст:** macOS Keychain показывал password prompt при каждом запуске debug-билда (code signature меняется).
+**Решение:** Хранить sessionKey в UserDefaults вместо Keychain.
+**Trade-off:** Менее безопасно (plaintext plist), но приемлемо для локальной dev-утилиты. Для production-релиза можно вернуть Keychain с подписанным билдом.
+
+---
+
+## D-016: Zero external dependencies
 **Дата:** 2026-04-02
 **Контекст:** Open-source проект использует Electron + Chart.js + electron-store (~150MB).
 **Решение:** Всё на встроенных фреймворках: SwiftUI, Swift Charts, SwiftData, WebKit, Security, UserNotifications.
