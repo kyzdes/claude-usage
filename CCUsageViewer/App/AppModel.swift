@@ -2,19 +2,23 @@ import Foundation
 import Observation
 
 enum DataSourcePreference: String, CaseIterable, Sendable {
-    case autoFallback
     case api
+    case autoFallback
     case ptyCapture
 
     var title: String {
         switch self {
-        case .autoFallback:
-            return "Auto (API → PTY fallback)"
         case .api:
-            return "API only"
+            return "API only (Recommended)"
+        case .autoFallback:
+            return "API + PTY fallback"
         case .ptyCapture:
-            return "PTY capture only"
+            return "PTY only (Not recommended)"
         }
+    }
+
+    var needsRiskAcceptance: Bool {
+        self == .autoFallback || self == .ptyCapture
     }
 }
 
@@ -53,6 +57,7 @@ final class AppModel {
         static let showRawCapture = "settings.showRawCapture"
         static let preferredDataSource = "settings.preferredDataSource"
         static let notificationsEnabled = "settings.notificationsEnabled"
+        static let ptyRiskAcceptedAt = "settings.ptyRiskAcceptedAt"
         static let warnThreshold = "settings.warnThreshold"
         static let dangerThreshold = "settings.dangerThreshold"
         static let compactMenuBarMode = "settings.compactMenuBarMode"
@@ -101,6 +106,10 @@ final class AppModel {
         didSet { defaults.set(dashboardTimeRange.rawValue, forKey: Keys.dashboardTimeRange) }
     }
 
+    func logPtyRiskAcceptance() {
+        defaults.set(Date().timeIntervalSince1970, forKey: Keys.ptyRiskAcceptedAt)
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         self.autoRefreshEnabled = defaults.object(forKey: Keys.autoRefreshEnabled) as? Bool ?? true
@@ -116,7 +125,7 @@ final class AppModel {
            let source = DataSourcePreference(rawValue: savedSource) {
             self.preferredDataSource = source
         } else {
-            self.preferredDataSource = .autoFallback
+            self.preferredDataSource = .api
         }
 
         if let savedRange = defaults.string(forKey: Keys.dashboardTimeRange),

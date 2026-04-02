@@ -1,14 +1,29 @@
+import AppKit
 import Foundation
 import UserNotifications
 
 @MainActor
-final class NotificationManager {
+final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     private var alertFired: [String: Bool] = [:]
     private var hasSeeded = false
 
+    override init() {
+        super.init()
+        // Set delegate so notifications show even when app is in foreground
+        UNUserNotificationCenter.current().delegate = self
+    }
+
+    // Show notification banner even when app is active
+    nonisolated func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
+        [.banner, .sound]
+    }
+
     func requestPermission() async {
         let center = UNUserNotificationCenter.current()
-        _ = try? await center.requestAuthorization(options: [.alert, .sound])
+        _ = try? await center.requestAuthorization(options: [.alert, .sound, .badge])
     }
 
     func seedAlertFlags(
@@ -100,16 +115,70 @@ final class NotificationManager {
         hasSeeded = false
     }
 
-    private func sendNotification(title: String, body: String) async {
+    func sendTestNotification() async {
+        let center = UNUserNotificationCenter.current()
+        let settings = await center.notificationSettings()
+
+        switch settings.authorizationStatus {
+        case .notDetermined:
+            await requestPermission()
+            let updated = await center.notificationSettings()
+            if updated.authorizationStatus == .authorized {
+                await sendNotification(
+                    title: "CC Usage Viewer",
+                    body: "Notifications enabled! You'll be alerted when usage crosses your thresholds.",
+                    withDelay: true
+                )
+            } else {
+                showBlockedAlert()
+            }
+
+        case .denied:
+            showBlockedAlert()
+
+        case .authorized, .provisional:
+            await sendNotification(
+                title: "CC Usage Viewer",
+                body: "Notifications are working! You'll be alerted when usage crosses your thresholds.",
+                withDelay: true
+            )
+
+        @unknown default:
+            break
+        }
+    }
+
+    private func showBlockedAlert() {
+        let alert = NSAlert()
+        alert.messageText = "Notifications Blocked"
+        alert.informativeText = "Notifications are disabled for this app. Enable them in System Settings → Notifications → CC Usage Viewer."
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: "Open System Settings")
+        alert.addButton(withTitle: "Cancel")
+        let response = alert.runModal()
+        if response == .alertFirstButtonReturn {
+            // Open notification settings for this app
+            if let url = URL(string: "x-apple.systempreferences:com.apple.Notifications-Settings.extension") {
+                NSWorkspace.shared.open(url)
+            }
+        }
+    }
+
+    private func sendNotification(title: String, body: String, withDelay: Bool = false) async {
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
         content.sound = .default
 
+        // Use a 1s delay trigger — nil trigger sometimes doesn't show banner on macOS
+        let trigger: UNNotificationTrigger? = withDelay
+            ? UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+            : nil
+
         let request = UNNotificationRequest(
             identifier: UUID().uuidString,
             content: content,
-            trigger: nil
+            trigger: trigger
         )
 
         try? await UNUserNotificationCenter.current().add(request)

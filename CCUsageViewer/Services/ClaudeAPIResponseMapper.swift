@@ -97,6 +97,15 @@ struct ClaudeAPIResponseMapper: Sendable {
             ))
         }
 
+        if let haiku = usage.sevenDayHaiku {
+            models.append(ModelLimitSection(
+                id: "seven_day_haiku",
+                modelName: "Haiku (7d)",
+                utilization: haiku.utilization,
+                resetsAt: parseDate(haiku.resetsAt)
+            ))
+        }
+
         if let cowork = usage.sevenDayCowork {
             models.append(ModelLimitSection(
                 id: "seven_day_cowork",

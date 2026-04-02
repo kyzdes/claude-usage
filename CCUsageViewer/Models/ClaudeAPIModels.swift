@@ -7,6 +7,7 @@ struct ClaudeAPIUsageResponse: Codable, Sendable {
     let sevenDay: UsageMetric?
     let sevenDaySonnet: UsageMetric?
     let sevenDayOpus: UsageMetric?
+    let sevenDayHaiku: UsageMetric?
     let sevenDayCowork: UsageMetric?
     let sevenDayOauthApps: UsageMetric?
 
@@ -25,6 +26,7 @@ struct ClaudeAPIUsageResponse: Codable, Sendable {
         case sevenDay = "seven_day"
         case sevenDaySonnet = "seven_day_sonnet"
         case sevenDayOpus = "seven_day_opus"
+        case sevenDayHaiku = "seven_day_haiku"
         case sevenDayCowork = "seven_day_cowork"
         case sevenDayOauthApps = "seven_day_oauth_apps"
     }

@@ -76,16 +76,32 @@ struct MenuBarContentView: View {
                     )
                 }
 
-                // Per-model breakdown
-                PerModelBreakdownView(
-                    models: snapshot.perModelLimits,
-                    warnThreshold: appModel.warnThreshold,
-                    dangerThreshold: appModel.dangerThreshold
-                )
+                // Per-model & extra usage combined
+                if !snapshot.perModelLimits.isEmpty || (snapshot.extraUsage?.isEnabled == true) {
+                    DisclosureGroup("Models & Extra Usage") {
+                        VStack(alignment: .leading, spacing: 10) {
+                            // Per-model bars
+                            ForEach(snapshot.perModelLimits) { model in
+                                HStack(spacing: 8) {
+                                    Text(model.modelName)
+                                        .font(.caption)
+                                        .frame(width: 90, alignment: .leading)
+                                    ProgressView(value: min(max(model.utilization, 0), 100), total: 100)
+                                        .tint(progressColor(for: model.utilization))
+                                    Text("\(Int(model.utilization))%")
+                                        .font(.caption.monospacedDigit())
+                                        .frame(width: 36, alignment: .trailing)
+                                }
+                            }
 
-                // Extra usage
-                if let extra = snapshot.extraUsage, extra.isEnabled {
-                    extraUsageCard(extra)
+                            // Extra usage
+                            if let extra = snapshot.extraUsage, extra.isEnabled {
+                                Divider()
+                                extraUsageCard(extra)
+                            }
+                        }
+                        .padding(.top, 4)
+                    }
                 }
 
                 if appModel.showRawCapture, !snapshot.rawText.isEmpty {

@@ -28,7 +28,7 @@
 - Системный браузер + ручной копипаст sessionKey из DevTools → отклонено, плохой UX
 - ASWebAuthenticationSession → отклонено, claude.ai не поддерживает callback URL scheme
 - Чтение cookie из Safari/Chrome на диске → отклонено, хрупко + требует Full Disk Access
-**Решение:** WKWebView в отдельном окне 1000x700. Перехват cookie через `WKHTTPCookieStoreObserver`.
+**Решение:** WKWebView в отдельном окне 1000x740. Перехват cookie через DispatchQueue polling.
 **Причина:** Единственный способ автоматически получить cookie без DevTools.
 
 ---
@@ -55,6 +55,7 @@
 **Контекст:** Google OAuth открывает popup-окно (accounts.google.com), WKWebView блокирует его по умолчанию.
 **Решение:** `createWebViewWith` delegate — загрузка popup URL в том же WebView.
 **Причина:** Без этого кнопка "Continue with Google" выдавала ошибку.
+**Обновлено (v2.1):** Теперь создаётся real popup window (NSWindow 500x600 с child WKWebView) вместо загрузки URL в том же WebView — это позволяет `window.opener.postMessage()` работать корректно для завершения OAuth flow.
 
 ---
 
@@ -74,11 +75,12 @@
 
 ---
 
-## D-009: macOS Keychain для хранения sessionKey
+## D-009: UserDefaults для хранения sessionKey (ранее Keychain)
 **Дата:** 2026-04-02
-**Контекст:** sessionKey — чувствительные данные, нельзя хранить в UserDefaults.
-**Решение:** `SecItemAdd` / `SecItemCopyMatching` с `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`.
-**Причина:** Keychain шифрует данные на уровне ОС. UserDefaults — plaintext plist.
+**Контекст:** macOS Keychain показывал password prompt при каждом запуске debug-билда (code signature меняется).
+**Решение:** Хранить sessionKey + orgId в UserDefaults вместо Keychain.
+**Причина:** Keychain привязывает доступ к code signature. Debug-билды получают новую подпись при каждой компиляции, что вызывает повторный password prompt. UserDefaults не имеет этой проблемы.
+**Trade-off:** Менее безопасно (plaintext plist), но приемлемо для локальной dev-утилиты. Для production-релиза можно вернуть Keychain с подписанным билдом.
 
 ---
 
@@ -96,6 +98,7 @@
 **Контекст:** `Task { while true { sleep; check } }` с `[weak self]` терял ссылку на self.
 **Решение:** `Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true)` на main run loop.
 **Причина:** Timer гарантированно вызывается на main run loop. Task с weak self мог потерять объект при пересоздании SwiftUI views.
+**Обновлено (v2.1):** Cookie polling в WebAuthService теперь использует DispatchQueue.main.asyncAfter вместо Timer (см. D-020).
 
 ---
 
@@ -107,6 +110,7 @@
 2. `Timer` polling (2s) — проверка URL + cookies + JS fallback
 3. JS `fetch('/api/organizations')` из контекста страницы — когда cookie store не отдаёт httpOnly cookies
 **Причина:** SPA-навигация не триггерит `didFinish`, cookie store может не отдать httpOnly cookies, Task-based polling теряет self.
+**Обновлено (v2.1):** Упрощено до DispatchQueue polling only. Observer удалён (срабатывал на старых cookies). JS injection удалён (вызывал page flicker). См. D-014 и D-020.
 
 ---
 
@@ -126,7 +130,7 @@
 ## D-014: Remove WKHTTPCookieStoreObserver, use DispatchQueue polling only
 **Дата:** 2026-04-02
 **Контекст:** Cookie observer срабатывал мгновенно при добавлении (cookies от прошлой сессии в `.default()` store), закрывая окно до того как пользователь мог залогиниться.
-**Решение:** Убрать observer полностью. Использовать только `DispatchQueue.main.asyncAfter` polling каждые 2с. Перед загрузкой login page — очищать все claude.ai cookies.
+**Решение:** Убрать observer полностью. Использовать только `DispatchQueue.main.asyncAfter` polling каждые 3с. Перед загрузкой login page — очищать только sessionKey cookie (не все claude.ai cookies).
 **Причина:** Observer не различает "старые cookies от прошлого логина" и "новые cookies от текущего логина". Polling проверяет URL (не /login) + cookies — это надёжно определяет свежий логин.
 
 ---
@@ -142,5 +146,79 @@
 ## D-016: Zero external dependencies
 **Дата:** 2026-04-02
 **Контекст:** Open-source проект использует Electron + Chart.js + electron-store (~150MB).
-**Решение:** Всё на встроенных фреймворках: SwiftUI, Swift Charts, SwiftData, WebKit, Security, UserNotifications.
+**Решение:** Всё на встроенных фреймворках: SwiftUI, Swift Charts, SwiftData, WebKit, UserNotifications.
 **Причина:** Нативное приложение должно быть лёгким. Все нужные API есть в macOS SDK.
+
+---
+
+## D-017: Remove Codex entirely — Claude-only app
+**Дата:** 2026-04-02
+**Контекст:** Приложение поддерживало два провайдера (Claude + Codex) через UsageDisplayMode и UsageProvider enums. Codex требовал отдельные services, models, views и tests.
+**Решение:** Удалить весь Codex код: services, models, views, tests, enums (UsageDisplayMode, UsageProvider). Приложение стало Claude-only.
+**Удалённые файлы:** CodexExecutableResolver.swift, Codex test files, все Codex-related enum cases.
+**Причина:** Приложение ориентировано на Claude Code пользователей. Codex добавлял сложность без ценности для целевой аудитории. Упрощение кодовой базы улучшает maintainability.
+
+---
+
+## D-018: API as default data source with PTY risk warning
+**Дата:** 2026-04-02
+**Контекст:** Data source picker предлагал три опции (auto/api/pty) с `autoFallback` как default.
+**Решение:** Default = `api` ("API only (Recommended)"). PTY опции (`autoFallback`, `ptyCapture`) показывают NSAlert с предупреждением о рисках. Принятие логируется с timestamp через `ptyRiskAcceptedAt`.
+**Причина:** PTY mode запускает CLI в terminal session — это нестабильно, потребляет ресурсы, может сломаться при обновлении CLI. API mode — надёжный и рекомендуемый способ.
+
+---
+
+## D-019: Real popup window for Google OAuth
+**Дата:** 2026-04-02
+**Контекст:** Google OAuth открывает popup (accounts.google.com). Ранее URL загружался в том же WebView через `createWebViewWith`. Это ломало `window.opener.postMessage()` — Google не мог вернуть результат OAuth в исходное окно.
+**Решение:** Создавать real NSWindow (500x600) с child WKWebView, передавая ту же `WKWebViewConfiguration`. Popup закрывается автоматически через `webViewDidClose` когда Google вызывает `window.close()`.
+**Причина:** Child WebView с shared configuration сохраняет `window.opener` reference, позволяя `postMessage()` работать. Это стандартный паттерн для OAuth popup в WKWebView.
+
+---
+
+## D-020: DispatchQueue polling instead of Timer/Task for cookie detection
+**Дата:** 2026-04-02
+**Контекст:** Cookie polling в WebAuthService использовал Timer.scheduledTimer (D-011). Timer с `[weak self]` capture иногда терял ссылку. Task-based polling (async/await) тоже терял self при пересоздании SwiftUI views.
+**Решение:** `DispatchQueue.main.asyncAfter(deadline: .now() + 3.0)` с рекурсивным вызовом `scheduleNextPoll()`. Проверяет `[weak self]` + `isPolling` + `!alreadyCaptured` на каждом тике.
+**Причина:** DispatchQueue dispatch надёжно вызывается на main thread, не зависит от RunLoop mode, self-retention через closure предсказуем. Polling стартует только после `didFinish` загрузки login page.
+
+---
+
+## D-021: NSEvent monitor for click-to-dismiss focus in Settings
+**Дата:** 2026-04-02
+**Контекст:** TextField для числовых значений в Settings оставались в focus (с курсором) после ввода. Пользователю приходилось нажимать Tab или Enter для подтверждения.
+**Решение:** `NSEvent.addLocalMonitorForEvents(matching: .leftMouseDown)` — при клике вне NSTextField вызывает `window.makeFirstResponder(nil)`.
+**Причина:** SwiftUI не предоставляет нативного способа dismiss focus при клике outside. NSEvent monitor — стандартный AppKit паттерн для этого.
+
+---
+
+## D-022: UNUserNotificationCenterDelegate for foreground notifications
+**Дата:** 2026-04-02
+**Контекст:** macOS по умолчанию не показывает notification banners когда приложение в foreground.
+**Решение:** NotificationManager наследует `UNUserNotificationCenterDelegate`, устанавливает себя как delegate в `init()`. Метод `willPresent` возвращает `[.banner, .sound]`.
+**Причина:** Menu bar приложение практически всегда "active" (popover open = foreground). Без delegate пользователь никогда не увидит threshold alerts.
+**Дополнительно:** "Send test notification" кнопка проверяет permission status. При `.denied` показывает NSAlert с кнопкой "Open System Settings" для включения нотификаций.
+
+---
+
+## D-023: Haiku model support added
+**Дата:** 2026-04-02
+**Контекст:** Claude.ai API начал возвращать `seven_day_haiku` поле в usage response.
+**Решение:** Добавлен `sevenDayHaiku` в `ClaudeAPIUsageResponse`. `ClaudeAPIResponseMapper.buildPerModelLimits()` создаёт `ModelLimitSection(id: "seven_day_haiku", modelName: "Haiku (7d)")`.
+**Причина:** Haiku — одна из моделей Claude, доступная пользователям. Per-model breakdown должен отражать все модели.
+
+---
+
+## D-024: Combined "Models & Extra Usage" expandable section
+**Дата:** 2026-04-02
+**Контекст:** Per-model breakdown и Extra Usage были отдельными секциями в popover, занимая много места.
+**Решение:** Объединены в один `DisclosureGroup("Models & Extra Usage")`. Per-model bars и extra usage card внутри одной expandable секции.
+**Причина:** Экономия вертикального пространства в popover. Per-model и extra usage — связанная информация (детализация usage). Collapsed по умолчанию — основные метрики (session + weekly) всегда видны.
+
+---
+
+## D-025: Chart gap detection with dashed interpolation lines
+**Дата:** 2026-04-02
+**Контекст:** MiniChartView рисовал сплошную линию между всеми точками, даже если между ними был перерыв в данных (приложение было закрыто, компьютер в sleep).
+**Решение:** Gap detection с порогом 10 минут. Данные разбиваются на сегменты. Реальные данные — solid line + gradient AreaMark. Интерполированные промежутки — dashed line (dash: [4, 4]) с пониженной opacity.
+**Причина:** Визуально отличает реальные данные от интерполированных. Пользователь сразу видит где были перерывы в мониторинге.

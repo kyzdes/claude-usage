@@ -4,11 +4,24 @@ struct SettingsView: View {
     @Bindable var appModel: AppModel
     let viewModel: LimitViewModel
     @ObservedObject var authService: WebAuthService
+    @FocusState private var focusedField: String?
+    @State private var showPtyRiskAlert = false
+    @State private var pendingDataSource: DataSourcePreference?
 
     var body: some View {
         Form {
             Section("Data Source") {
-                Picker("Preferred source", selection: $appModel.preferredDataSource) {
+                Picker("Preferred source", selection: Binding(
+                    get: { appModel.preferredDataSource },
+                    set: { newValue in
+                        if newValue.needsRiskAcceptance {
+                            pendingDataSource = newValue
+                            showPtyRiskAlert = true
+                        } else {
+                            appModel.preferredDataSource = newValue
+                        }
+                    }
+                )) {
                     ForEach(DataSourcePreference.allCases, id: \.rawValue) { pref in
                         Text(pref.title).tag(pref)
                     }
@@ -64,6 +77,7 @@ struct SettingsView: View {
                         .textFieldStyle(.roundedBorder)
                         .frame(width: 56)
                         .multilineTextAlignment(.center)
+                        .focused($focusedField, equals: "warn")
                     Text("%")
                         .foregroundStyle(.secondary)
                 }
@@ -76,9 +90,17 @@ struct SettingsView: View {
                         .textFieldStyle(.roundedBorder)
                         .frame(width: 56)
                         .multilineTextAlignment(.center)
+                        .focused($focusedField, equals: "danger")
                     Text("%")
                         .foregroundStyle(.secondary)
                 }
+
+                Button("Send test notification") {
+                    Task {
+                        await viewModel.notificationManager.sendTestNotification()
+                    }
+                }
+                .controlSize(.small)
             }
 
             Section("Refresh") {
@@ -91,6 +113,7 @@ struct SettingsView: View {
                         .textFieldStyle(.roundedBorder)
                         .frame(width: 56)
                         .multilineTextAlignment(.center)
+                        .focused($focusedField, equals: "interval")
                     Text("min")
                         .foregroundStyle(.secondary)
                 }
@@ -102,6 +125,7 @@ struct SettingsView: View {
                         .textFieldStyle(.roundedBorder)
                         .frame(width: 56)
                         .multilineTextAlignment(.center)
+                        .focused($focusedField, equals: "stale")
                     Text("min")
                         .foregroundStyle(.secondary)
                 }
@@ -127,8 +151,41 @@ struct SettingsView: View {
         }
         .formStyle(.grouped)
         .padding(20)
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                NSApp.keyWindow?.makeFirstResponder(nil)
+            }
+            // Monitor clicks — resign first responder when clicking outside text fields
+            NSEvent.addLocalMonitorForEvents(matching: .leftMouseDown) { event in
+                if let window = NSApp.keyWindow,
+                   let firstResponder = window.firstResponder,
+                   firstResponder is NSTextView {
+                    // Check if click is NOT on a text field
+                    let location = event.locationInWindow
+                    if let hitView = window.contentView?.hitTest(location),
+                       !(hitView is NSTextField) {
+                        window.makeFirstResponder(nil)
+                    }
+                }
+                return event
+            }
+        }
         .onChange(of: appModel.refreshSettingsKey) { _, _ in
             viewModel.reconfigureAutoRefresh()
+        }
+        .alert("PTY Capture Risk", isPresented: $showPtyRiskAlert) {
+            Button("Accept Risk") {
+                if let pending = pendingDataSource {
+                    appModel.preferredDataSource = pending
+                    appModel.logPtyRiskAcceptance()
+                }
+                pendingDataSource = nil
+            }
+            Button("Cancel", role: .cancel) {
+                pendingDataSource = nil
+            }
+        } message: {
+            Text("PTY mode launches Claude CLI in a terminal session. This may be unstable, consume extra resources, and break with CLI updates.\n\nAPI mode is recommended for reliable usage tracking.")
         }
     }
 }
