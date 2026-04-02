@@ -13,6 +13,10 @@ targets:
     platform: macOS
     sources:
       - path: CCUsageViewer
+    entitlements:
+      path: CCUsageViewer/Resources/CCUsageViewer.entitlements
+      properties:
+        com.apple.security.network.client: true
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES

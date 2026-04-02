@@ -33,4 +33,5 @@ final class ANSIStreamParserTests: XCTestCase {
         XCTAssertTrue(rendered.contains("Current session"))
         XCTAssertTrue(rendered.contains("20% used"))
     }
+
 }

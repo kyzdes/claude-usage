@@ -73,4 +73,5 @@ final class CaptureFlowStateMachineTests: XCTestCase {
 
         XCTAssertNil(planName)
     }
+
 }

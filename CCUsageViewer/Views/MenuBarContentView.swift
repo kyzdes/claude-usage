@@ -3,52 +3,95 @@ import SwiftUI
 
 struct MenuBarContentView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openWindow) private var openWindow
     @Bindable var appModel: AppModel
     let viewModel: LimitViewModel
+    var recentSamples: [UsageHistorySample] = []
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             header
             content
-            Divider()
             footer
         }
-        .frame(width: 380)
+        .frame(width: 390)
         .padding(16)
         .onChange(of: appModel.refreshSettingsKey) { _, _ in
             viewModel.reconfigureAutoRefresh()
         }
     }
 
+    // MARK: - Header (fix: center alignment, badges grouped)
+
     private var header: some View {
-        HStack(alignment: .top) {
-            VStack(alignment: .leading, spacing: 0) {
-                Text(viewModel.snapshot?.displayPlanName ?? "Claude subscription")
-                    .font(.headline)
-            }
+        HStack {
+            Text(viewModel.claudeSnapshot?.displayPlanName ?? "Claude subscription")
+                .font(.headline)
 
             Spacer()
 
-            sourceBadge
+            HStack(spacing: 6) {
+                // Data source badge
+                if let snapshot = viewModel.claudeSnapshot {
+                    Text(snapshot.dataSource == .claudeAPI ? "API" : "PTY")
+                        .font(.system(size: 9, weight: .semibold, design: .monospaced))
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(Color.secondary.opacity(0.12)))
+                        .foregroundStyle(.secondary)
+                }
+
+                sourceBadge
+            }
         }
     }
 
+    // MARK: - Content
+
     @ViewBuilder
     private var content: some View {
-        if let snapshot = viewModel.snapshot {
+        if let snapshot = viewModel.claudeSnapshot {
             VStack(alignment: .leading, spacing: 12) {
+                if let accountLabel = snapshot.accountLabel {
+                    Text(accountLabel)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
                 if let currentSession = snapshot.currentSession {
-                    LimitSectionCard(section: currentSession)
+                    LimitSectionCard(
+                        section: currentSession,
+                        resetsAt: viewModel.sessionResetsAt,
+                        warnThreshold: appModel.warnThreshold,
+                        dangerThreshold: appModel.dangerThreshold
+                    )
                 }
 
                 if let weeklyLimit = snapshot.weeklyLimit {
-                    LimitSectionCard(section: weeklyLimit)
+                    LimitSectionCard(
+                        section: weeklyLimit,
+                        resetsAt: viewModel.weeklyResetsAt,
+                        warnThreshold: appModel.warnThreshold,
+                        dangerThreshold: appModel.dangerThreshold
+                    )
                 }
 
-                if appModel.showRawCapture {
-                    DisclosureGroup("Raw /usage capture") {
+                // Per-model breakdown
+                PerModelBreakdownView(
+                    models: snapshot.perModelLimits,
+                    warnThreshold: appModel.warnThreshold,
+                    dangerThreshold: appModel.dangerThreshold
+                )
+
+                // Extra usage
+                if let extra = snapshot.extraUsage, extra.isEnabled {
+                    extraUsageCard(extra)
+                }
+
+                if appModel.showRawCapture, !snapshot.rawText.isEmpty {
+                    DisclosureGroup("Raw capture") {
                         ScrollView {
-                            Text(snapshot.rawText.isEmpty ? "No raw text captured." : snapshot.rawText)
+                            Text(snapshot.rawText)
                                 .font(.system(.caption, design: .monospaced))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .textSelection(.enabled)
@@ -59,23 +102,34 @@ struct MenuBarContentView: View {
                 }
             }
         } else if viewModel.isRefreshing {
-            ProgressView("Refreshing /usage…")
+            ProgressView("Refreshing…")
                 .frame(maxWidth: .infinity, alignment: .leading)
-        } else if let message = viewModel.lastErrorMessage {
+        } else if let message = viewModel.claudeLastErrorMessage {
             Text(message)
                 .font(.callout)
                 .foregroundStyle(.secondary)
         } else {
-            Text("Run a capture to read the current Claude subscription limits.")
+            Text("Run a capture to read Claude subscription limits.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
         }
     }
 
+    // MARK: - Footer
+
     private var footer: some View {
         VStack(alignment: .leading, spacing: 10) {
-            if let errorMessage = viewModel.lastErrorMessage, viewModel.sourceState != .live {
-                Text(errorMessage)
+            // Mini chart (expandable)
+            if recentSamples.count >= 2 {
+                DisclosureGroup("Usage trend (24h)") {
+                    MiniChartView(samples: recentSamples)
+                        .padding(.top, 4)
+                }
+            }
+
+            // Error hint
+            if let hint = viewModel.claudeLastHint, viewModel.claudeSourceState != .live {
+                Text(hint)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -88,6 +142,10 @@ struct MenuBarContentView: View {
                 }
                 .disabled(viewModel.isRefreshing)
 
+                Button("Dashboard") {
+                    openWindow(id: "dashboard")
+                }
+
                 Button("Close") {
                     dismiss()
                 }
@@ -98,85 +156,38 @@ struct MenuBarContentView: View {
 
                 Spacer()
 
-                SettingsLink {
-                    Text("Settings…")
+                Button("Settings…") {
+                    openWindow(id: "settings")
                 }
             }
         }
     }
 
-    private var sourceBadge: some View {
-        Text(sourceLabel)
-            .font(.caption.weight(.semibold))
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(
-                Capsule()
-                    .fill(sourceColor.opacity(0.18))
-            )
-            .foregroundStyle(sourceColor)
-    }
+    // MARK: - Helpers
 
-    private var sourceLabel: String {
-        switch viewModel.sourceState {
-        case .live:
-            return "Live"
-        case .partial:
-            return "Partial"
-        case .stale:
-            return "Stale"
-        case .authRequired:
-            return "Auth"
-        case .apiKeyMode:
-            return "API Key"
-        case .unavailable:
-            return "Unavailable"
-        }
-    }
-
-    private var sourceColor: Color {
-        switch viewModel.sourceState {
-        case .live:
-            return .green
-        case .partial:
-            return .orange
-        case .stale:
-            return .yellow
-        case .authRequired, .apiKeyMode, .unavailable:
-            return .red
-        }
-    }
-}
-
-private struct LimitSectionCard: View {
-    let section: LimitSection
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(section.title)
+    @ViewBuilder
+    private func extraUsageCard(_ extra: ExtraUsageInfo) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Extra Usage")
                 .font(.subheadline.weight(.semibold))
 
-            if let metric = section.primaryMetricText {
-                Text(metric)
-                    .font(.body)
-            }
-
-            if let progressPercent = section.progressPercent {
-                ProgressView(value: progressPercent, total: 100)
+            if let utilization = extra.utilization {
+                ProgressView(value: min(max(utilization, 0), 100), total: 100)
+                    .tint(progressColor(for: utilization))
                     .controlSize(.small)
-                Text("\(Int(progressPercent))% detected")
+                Text("\(Int(utilization))% of extra limit used")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
-            if let usedText = section.usedText, usedText != section.primaryMetricText {
-                Text(usedText)
+            if let used = extra.usedCents, let limit = extra.limitCents {
+                Text("\(formatCents(used, currency: extra.currency)) / \(formatCents(limit, currency: extra.currency))")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
-            if let resetText = section.resetText {
-                Text(resetText)
+            if let balance = extra.balanceCents {
+                Text("Prepaid: \(formatCents(balance, currency: extra.currency))")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -187,5 +198,106 @@ private struct LimitSectionCard: View {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.secondary.opacity(0.08))
         )
+    }
+
+    private func formatCents(_ cents: Int, currency: String) -> String {
+        let amount = Double(cents) / 100.0
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = currency
+        return formatter.string(from: NSNumber(value: amount)) ?? "\(currency) \(amount)"
+    }
+
+    private func progressColor(for value: Double) -> Color {
+        if value >= Double(appModel.dangerThreshold) { return .red }
+        if value >= Double(appModel.warnThreshold) { return .orange }
+        return .green
+    }
+
+    private var sourceBadge: some View {
+        let state = viewModel.claudeSourceState
+        return Text(sourceLabel(for: state))
+            .font(.caption.weight(.semibold))
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(
+                Capsule()
+                    .fill(sourceColor(for: state).opacity(0.18))
+            )
+            .foregroundStyle(sourceColor(for: state))
+    }
+
+    private func sourceLabel(for state: CaptureSourceState) -> String {
+        switch state {
+        case .live: return "Live"
+        case .partial: return "Partial"
+        case .stale: return "Stale"
+        case .authRequired: return "Auth"
+        case .apiKeyMode: return "API Key"
+        case .unavailable: return "Unavailable"
+        }
+    }
+
+    private func sourceColor(for state: CaptureSourceState) -> Color {
+        switch state {
+        case .live: return .green
+        case .partial: return .orange
+        case .stale: return .yellow
+        case .authRequired, .apiKeyMode, .unavailable: return .red
+        }
+    }
+}
+
+// MARK: - LimitSectionCard (fixed: no duplication)
+
+private struct LimitSectionCard: View {
+    let section: LimitSection
+    let resetsAt: Date?
+    let warnThreshold: Int
+    let dangerThreshold: Int
+
+    var body: some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(section.title)
+                    .font(.subheadline.weight(.semibold))
+
+                if let progressPercent = section.progressPercent {
+                    HStack(spacing: 8) {
+                        ProgressView(value: progressPercent, total: 100)
+                            .tint(progressColor(for: progressPercent))
+                            .controlSize(.small)
+                        Text("\(Int(progressPercent))%")
+                            .font(.caption.monospacedDigit().weight(.medium))
+                            .foregroundStyle(.secondary)
+                            .frame(width: 32, alignment: .trailing)
+                    }
+                }
+            }
+
+            Spacer()
+
+            // Countdown timer
+            if let windowMinutes = section.windowDurationMinutes {
+                CountdownTimerView(
+                    resetsAt: resetsAt ?? section.resetsAt,
+                    windowDurationMinutes: windowMinutes,
+                    warnThreshold: warnThreshold,
+                    dangerThreshold: dangerThreshold
+                )
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.secondary.opacity(0.08))
+        )
+    }
+
+    private func progressColor(for value: Double) -> Color {
+        if value >= Double(dangerThreshold) { return .red }
+        if value >= Double(warnThreshold) { return .orange }
+        return .green
     }
 }

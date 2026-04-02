@@ -41,6 +41,7 @@ struct UsageScreenParser: UsageScreenParserProtocol, Sendable {
         return SubscriptionLimitSnapshot(
             capturedAt: capturedAt,
             planName: planName,
+            accountLabel: nil,
             currentSession: currentSession,
             weeklyLimit: weeklyLimit,
             rawText: normalizedText.trimmingCharacters(in: .whitespacesAndNewlines),

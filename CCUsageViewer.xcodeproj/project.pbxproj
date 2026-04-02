@@ -3,24 +3,40 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		0062FC8B99D95995F6B964C2 /* UsageScreenParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542A7C57787E7675B4A3265B /* UsageScreenParserTests.swift */; };
 		033A4AA7824FDB8456115FF2 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3572786963699D2D0B2703 /* SettingsView.swift */; };
+		0353F2B43D450AFC6DC6A4F3 /* UsageHistorySample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830EA94383D7EF747B11A0E9 /* UsageHistorySample.swift */; };
 		0D70306AD6BCCBCBADDEBCAA /* TerminalScreenBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C1B0D583A5FF9FF045D94B /* TerminalScreenBuffer.swift */; };
+		0E279B9D32C674FC8866A3D2 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4017912329B4FD9412792720 /* DashboardView.swift */; };
 		1CC35599B9AF4A794D2FEE4C /* ANSIStreamParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329BA06169C5A8AB464A2BAF /* ANSIStreamParserTests.swift */; };
+		29269D357297900AD947BC48 /* CountdownTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB9693169B487920FF29BF15 /* CountdownTimerView.swift */; };
 		308379E1D47B540EDBED4676 /* UsageScreenParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C228176C5B546CA76E8314E /* UsageScreenParser.swift */; };
+		31DCB41B2F81C9A019E92A96 /* ClaudeAPIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F42F22B671D0B26ABED447 /* ClaudeAPIModels.swift */; };
+		3BF644C23537040357519C31 /* ClaudeAPIResponseMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14CAD62E247CAA2A5BB07EB /* ClaudeAPIResponseMapper.swift */; };
+		415259EC73F8F2A09957C5BB /* CaptureFlowStateMachineTrustPersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0CD05EB12FE4FFD938D9D7 /* CaptureFlowStateMachineTrustPersistenceTests.swift */; };
+		46AB29A76679CA2A3EC2EA42 /* SessionKeyStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D587EBAEE6E723446CF30D9 /* SessionKeyStorage.swift */; };
+		4FBF6E7A1F6E2FDA394881BD /* WebAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A941650E5A03AC5E6AB6C6 /* WebAuthView.swift */; };
 		519C08091EF7B93CDFEC5099 /* ClaudeUsageCaptureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA2CE4F660A630E0C7191D2 /* ClaudeUsageCaptureService.swift */; };
 		64414DD750BD2674F9750C70 /* MenuBarContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE2D9F45F0193E4A1809E1F /* MenuBarContentView.swift */; };
+		6B63A03C705E7F3693DFB5C7 /* UsageDataSourceCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7914FF5D3BE6F47C2CE03974 /* UsageDataSourceCoordinator.swift */; };
 		8887EA91A3D7A0F44070A296 /* ANSIStreamParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8F00F0D974DF25E2221AA6 /* ANSIStreamParser.swift */; };
 		94CA738CAD9E7109949C7CB2 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF19830647B61B5629E458C2 /* AppModel.swift */; };
 		97231687F889A8C6855FFB8A /* SubscriptionLimitModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C6E74EBCFB0A16D2E55A2F /* SubscriptionLimitModels.swift */; };
 		9ADF71418A1D99A31FB31E6F /* CCUsageViewerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6412E0FD0EFE46186237781 /* CCUsageViewerApp.swift */; };
+		9C8B3A7B5A40A5AC65A79B72 /* UsageHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99D50CA43C2642AD8AD9B1F /* UsageHistoryStore.swift */; };
+		9F76DAC4C05964DF1B4CA58B /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE65F23326F07818D0293A1E /* NotificationManager.swift */; };
+		AB12524966113DB710C03E3F /* PerModelBreakdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFA90B4BE1D301573CE661A /* PerModelBreakdownView.swift */; };
 		D19066A6E48A3FBDC4C41FFD /* LimitViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61AF1FD0CBA2F4C3E88B3F46 /* LimitViewModel.swift */; };
+		E0FD08FAD2005FE5843DCEF4 /* ClaudeAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9072BF1DEE5E1A6B61FFACD7 /* ClaudeAPIService.swift */; };
+		E903E91398035F2C27F867CD /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02C07CC7D447C268E5895E4 /* DashboardViewModel.swift */; };
 		EDFF0128D15032BA3A2A0E62 /* CaptureFlowStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 999949883F587C5B452ACA5F /* CaptureFlowStateMachine.swift */; };
+		EF52C0277D0D5AD6026F02E8 /* MiniChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 127CD06E30C30D87AF06A283 /* MiniChartView.swift */; };
 		FCC11FCD318ED50F29692C6A /* CaptureFlowStateMachineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97230260EB8D6C1FB193BAD8 /* CaptureFlowStateMachineTests.swift */; };
+		FFF29EDA8B26351434917261 /* WebAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDDE12B2F90EEA6F411AC7DF /* WebAuthService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,21 +51,38 @@
 
 /* Begin PBXFileReference section */
 		0A3572786963699D2D0B2703 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		127CD06E30C30D87AF06A283 /* MiniChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniChartView.swift; sourceTree = "<group>"; };
 		329BA06169C5A8AB464A2BAF /* ANSIStreamParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANSIStreamParserTests.swift; sourceTree = "<group>"; };
+		4017912329B4FD9412792720 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		4BE2D9F45F0193E4A1809E1F /* MenuBarContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarContentView.swift; sourceTree = "<group>"; };
 		542A7C57787E7675B4A3265B /* UsageScreenParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageScreenParserTests.swift; sourceTree = "<group>"; };
 		5AA2CE4F660A630E0C7191D2 /* ClaudeUsageCaptureService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeUsageCaptureService.swift; sourceTree = "<group>"; };
+		5D587EBAEE6E723446CF30D9 /* SessionKeyStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionKeyStorage.swift; sourceTree = "<group>"; };
 		61AF1FD0CBA2F4C3E88B3F46 /* LimitViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LimitViewModel.swift; sourceTree = "<group>"; };
+		78F42F22B671D0B26ABED447 /* ClaudeAPIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeAPIModels.swift; sourceTree = "<group>"; };
+		7914FF5D3BE6F47C2CE03974 /* UsageDataSourceCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageDataSourceCoordinator.swift; sourceTree = "<group>"; };
+		830EA94383D7EF747B11A0E9 /* UsageHistorySample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageHistorySample.swift; sourceTree = "<group>"; };
+		9072BF1DEE5E1A6B61FFACD7 /* ClaudeAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeAPIService.swift; sourceTree = "<group>"; };
 		97230260EB8D6C1FB193BAD8 /* CaptureFlowStateMachineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureFlowStateMachineTests.swift; sourceTree = "<group>"; };
 		999949883F587C5B452ACA5F /* CaptureFlowStateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureFlowStateMachine.swift; sourceTree = "<group>"; };
 		9C228176C5B546CA76E8314E /* UsageScreenParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageScreenParser.swift; sourceTree = "<group>"; };
 		9F6537C0A3FCE29ED4ADEE8D /* CCUsageViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CCUsageViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A99D50CA43C2642AD8AD9B1F /* UsageHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageHistoryStore.swift; sourceTree = "<group>"; };
+		AB9693169B487920FF29BF15 /* CountdownTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownTimerView.swift; sourceTree = "<group>"; };
+		B3702936C1B313CBDA9C0CB3 /* CCUsageViewer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CCUsageViewer.entitlements; sourceTree = "<group>"; };
 		B4C1B0D583A5FF9FF045D94B /* TerminalScreenBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalScreenBuffer.swift; sourceTree = "<group>"; };
+		BDFA90B4BE1D301573CE661A /* PerModelBreakdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerModelBreakdownView.swift; sourceTree = "<group>"; };
+		BE65F23326F07818D0293A1E /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		CD8C849AB795A1ED6D3AED0B /* CCUsageViewerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CCUsageViewerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E14CAD62E247CAA2A5BB07EB /* ClaudeAPIResponseMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeAPIResponseMapper.swift; sourceTree = "<group>"; };
 		E6C6E74EBCFB0A16D2E55A2F /* SubscriptionLimitModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionLimitModels.swift; sourceTree = "<group>"; };
 		EF19830647B61B5629E458C2 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		F02C07CC7D447C268E5895E4 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
 		F6412E0FD0EFE46186237781 /* CCUsageViewerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCUsageViewerApp.swift; sourceTree = "<group>"; };
+		F9A941650E5A03AC5E6AB6C6 /* WebAuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAuthView.swift; sourceTree = "<group>"; };
 		FB8F00F0D974DF25E2221AA6 /* ANSIStreamParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANSIStreamParser.swift; sourceTree = "<group>"; };
+		FDDE12B2F90EEA6F411AC7DF /* WebAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAuthService.swift; sourceTree = "<group>"; };
+		FE0CD05EB12FE4FFD938D9D7 /* CaptureFlowStateMachineTrustPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureFlowStateMachineTrustPersistenceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -58,9 +91,16 @@
 			children = (
 				FB8F00F0D974DF25E2221AA6 /* ANSIStreamParser.swift */,
 				999949883F587C5B452ACA5F /* CaptureFlowStateMachine.swift */,
+				E14CAD62E247CAA2A5BB07EB /* ClaudeAPIResponseMapper.swift */,
+				9072BF1DEE5E1A6B61FFACD7 /* ClaudeAPIService.swift */,
 				5AA2CE4F660A630E0C7191D2 /* ClaudeUsageCaptureService.swift */,
+				BE65F23326F07818D0293A1E /* NotificationManager.swift */,
+				5D587EBAEE6E723446CF30D9 /* SessionKeyStorage.swift */,
 				B4C1B0D583A5FF9FF045D94B /* TerminalScreenBuffer.swift */,
+				7914FF5D3BE6F47C2CE03974 /* UsageDataSourceCoordinator.swift */,
+				A99D50CA43C2642AD8AD9B1F /* UsageHistoryStore.swift */,
 				9C228176C5B546CA76E8314E /* UsageScreenParser.swift */,
+				FDDE12B2F90EEA6F411AC7DF /* WebAuthService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -68,8 +108,13 @@
 		2923A284707865E6C2A23404 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				AB9693169B487920FF29BF15 /* CountdownTimerView.swift */,
+				4017912329B4FD9412792720 /* DashboardView.swift */,
 				4BE2D9F45F0193E4A1809E1F /* MenuBarContentView.swift */,
+				127CD06E30C30D87AF06A283 /* MiniChartView.swift */,
+				BDFA90B4BE1D301573CE661A /* PerModelBreakdownView.swift */,
 				0A3572786963699D2D0B2703 /* SettingsView.swift */,
+				F9A941650E5A03AC5E6AB6C6 /* WebAuthView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -81,6 +126,14 @@
 				F6412E0FD0EFE46186237781 /* CCUsageViewerApp.swift */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		344A1E942BD795A3AE5A8950 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B3702936C1B313CBDA9C0CB3 /* CCUsageViewer.entitlements */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		3EA1893B64DBDC3FF0FE75DF /* Products */ = {
@@ -102,7 +155,9 @@
 		5D3CD2E5A9B776C201C22C33 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				78F42F22B671D0B26ABED447 /* ClaudeAPIModels.swift */,
 				E6C6E74EBCFB0A16D2E55A2F /* SubscriptionLimitModels.swift */,
+				830EA94383D7EF747B11A0E9 /* UsageHistorySample.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -110,6 +165,7 @@
 		62A6D8B4A250FF3819B3B6BB /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				F02C07CC7D447C268E5895E4 /* DashboardViewModel.swift */,
 				61AF1FD0CBA2F4C3E88B3F46 /* LimitViewModel.swift */,
 			);
 			path = ViewModels;
@@ -120,6 +176,7 @@
 			children = (
 				329BA06169C5A8AB464A2BAF /* ANSIStreamParserTests.swift */,
 				97230260EB8D6C1FB193BAD8 /* CaptureFlowStateMachineTests.swift */,
+				FE0CD05EB12FE4FFD938D9D7 /* CaptureFlowStateMachineTrustPersistenceTests.swift */,
 				542A7C57787E7675B4A3265B /* UsageScreenParserTests.swift */,
 				4A6DC43106EFCEFC92FB5EA5 /* Fixtures */,
 			);
@@ -131,6 +188,7 @@
 			children = (
 				2C75460C970ECAD5F394949D /* App */,
 				5D3CD2E5A9B776C201C22C33 /* Models */,
+				344A1E942BD795A3AE5A8950 /* Resources */,
 				03FBD270DC0094DA94CC2F15 /* Services */,
 				62A6D8B4A250FF3819B3B6BB /* ViewModels */,
 				2923A284707865E6C2A23404 /* Views */,
@@ -192,7 +250,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2640;
+				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					801C44890D7ABEACC4743608 = {
 						DevelopmentTeam = "";
@@ -212,6 +270,7 @@
 			);
 			mainGroup = F2A75B32AED48553077F7B4E;
 			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -230,13 +289,28 @@
 				94CA738CAD9E7109949C7CB2 /* AppModel.swift in Sources */,
 				9ADF71418A1D99A31FB31E6F /* CCUsageViewerApp.swift in Sources */,
 				EDFF0128D15032BA3A2A0E62 /* CaptureFlowStateMachine.swift in Sources */,
+				31DCB41B2F81C9A019E92A96 /* ClaudeAPIModels.swift in Sources */,
+				3BF644C23537040357519C31 /* ClaudeAPIResponseMapper.swift in Sources */,
+				E0FD08FAD2005FE5843DCEF4 /* ClaudeAPIService.swift in Sources */,
 				519C08091EF7B93CDFEC5099 /* ClaudeUsageCaptureService.swift in Sources */,
+				29269D357297900AD947BC48 /* CountdownTimerView.swift in Sources */,
+				0E279B9D32C674FC8866A3D2 /* DashboardView.swift in Sources */,
+				E903E91398035F2C27F867CD /* DashboardViewModel.swift in Sources */,
 				D19066A6E48A3FBDC4C41FFD /* LimitViewModel.swift in Sources */,
 				64414DD750BD2674F9750C70 /* MenuBarContentView.swift in Sources */,
+				EF52C0277D0D5AD6026F02E8 /* MiniChartView.swift in Sources */,
+				9F76DAC4C05964DF1B4CA58B /* NotificationManager.swift in Sources */,
+				AB12524966113DB710C03E3F /* PerModelBreakdownView.swift in Sources */,
+				46AB29A76679CA2A3EC2EA42 /* SessionKeyStorage.swift in Sources */,
 				033A4AA7824FDB8456115FF2 /* SettingsView.swift in Sources */,
 				97231687F889A8C6855FFB8A /* SubscriptionLimitModels.swift in Sources */,
 				0D70306AD6BCCBCBADDEBCAA /* TerminalScreenBuffer.swift in Sources */,
+				6B63A03C705E7F3693DFB5C7 /* UsageDataSourceCoordinator.swift in Sources */,
+				0353F2B43D450AFC6DC6A4F3 /* UsageHistorySample.swift in Sources */,
+				9C8B3A7B5A40A5AC65A79B72 /* UsageHistoryStore.swift in Sources */,
 				308379E1D47B540EDBED4676 /* UsageScreenParser.swift in Sources */,
+				FFF29EDA8B26351434917261 /* WebAuthService.swift in Sources */,
+				4FBF6E7A1F6E2FDA394881BD /* WebAuthView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,6 +320,7 @@
 			files = (
 				1CC35599B9AF4A794D2FEE4C /* ANSIStreamParserTests.swift in Sources */,
 				FCC11FCD318ED50F29692C6A /* CaptureFlowStateMachineTests.swift in Sources */,
+				415259EC73F8F2A09957C5BB /* CaptureFlowStateMachineTrustPersistenceTests.swift in Sources */,
 				0062FC8B99D95995F6B964C2 /* UsageScreenParserTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -295,12 +370,10 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -322,7 +395,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.vkuznetsov.CCUsageViewer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 6.0;
@@ -334,7 +406,6 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -380,12 +451,10 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -400,7 +469,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.vkuznetsov.CCUsageViewer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 6.0;
@@ -411,8 +479,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = CCUsageViewer/Resources/CCUsageViewer.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "CC Usage Viewer";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
@@ -432,8 +500,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = CCUsageViewer/Resources/CCUsageViewer.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "CC Usage Viewer";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
@@ -454,7 +522,6 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

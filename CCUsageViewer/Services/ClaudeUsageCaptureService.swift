@@ -341,3 +341,4 @@ struct ClaudeUsageCaptureService: ClaudeUsageCaptureServiceProtocol, Sendable {
         return result == processID ? status : nil
     }
 }
+

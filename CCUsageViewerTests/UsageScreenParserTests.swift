@@ -89,4 +89,5 @@ final class UsageScreenParserTests: XCTestCase {
             XCTAssertEqual(error as? UsageScreenParserError, .missingUsageMarkers)
         }
     }
+
 }
