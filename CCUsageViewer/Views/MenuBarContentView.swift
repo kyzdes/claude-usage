@@ -144,6 +144,7 @@ struct MenuBarContentView: View {
 
             Button("Open Settings") {
                 openWindow(id: "settings")
+                    NSApp.activate(ignoringOtherApps: true)
             }
             .controlSize(.small)
         }
@@ -194,6 +195,7 @@ struct MenuBarContentView: View {
 
                 Button("Settings…") {
                     openWindow(id: "settings")
+                    NSApp.activate(ignoringOtherApps: true)
                 }
             }
         }

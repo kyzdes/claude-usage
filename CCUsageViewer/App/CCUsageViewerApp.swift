@@ -67,11 +67,12 @@ struct CCUsageViewerApp: App {
                 viewModel: limitViewModel,
                 authService: authService
             )
-            .frame(width: 520)
+            .frame(width: 520, height: 620)
             .onAppear {
                 NSApp.activate(ignoringOtherApps: true)
             }
         }
+        .defaultSize(width: 520, height: 620)
         .windowResizability(.contentSize)
     }
 

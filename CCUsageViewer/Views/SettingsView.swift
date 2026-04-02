@@ -56,30 +56,54 @@ struct SettingsView: View {
             Section("Notifications") {
                 Toggle("Usage alerts", isOn: $appModel.notificationsEnabled)
 
-                Stepper(value: $appModel.warnThreshold, in: 1...99) {
-                    HStack {
-                        Circle().fill(.orange).frame(width: 8, height: 8)
-                        Text("Warn at \(appModel.warnThreshold)%")
-                    }
+                HStack {
+                    Circle().fill(.orange).frame(width: 8, height: 8)
+                    Text("Warn at")
+                    Spacer()
+                    TextField("", value: $appModel.warnThreshold, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 56)
+                        .multilineTextAlignment(.center)
+                    Text("%")
+                        .foregroundStyle(.secondary)
                 }
 
-                Stepper(value: $appModel.dangerThreshold, in: 1...99) {
-                    HStack {
-                        Circle().fill(.red).frame(width: 8, height: 8)
-                        Text("Danger at \(appModel.dangerThreshold)%")
-                    }
+                HStack {
+                    Circle().fill(.red).frame(width: 8, height: 8)
+                    Text("Danger at")
+                    Spacer()
+                    TextField("", value: $appModel.dangerThreshold, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 56)
+                        .multilineTextAlignment(.center)
+                    Text("%")
+                        .foregroundStyle(.secondary)
                 }
             }
 
             Section("Refresh") {
                 Toggle("Auto refresh", isOn: $appModel.autoRefreshEnabled)
 
-                Stepper(value: $appModel.refreshIntervalMinutes, in: 1...60) {
-                    Text("Refresh every \(appModel.refreshIntervalMinutes) min")
+                HStack {
+                    Text("Refresh every")
+                    Spacer()
+                    TextField("", value: $appModel.refreshIntervalMinutes, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 56)
+                        .multilineTextAlignment(.center)
+                    Text("min")
+                        .foregroundStyle(.secondary)
                 }
 
-                Stepper(value: $appModel.staleThresholdMinutes, in: 1...180) {
-                    Text("Mark stale after \(appModel.staleThresholdMinutes) min")
+                HStack {
+                    Text("Mark stale after")
+                    Spacer()
+                    TextField("", value: $appModel.staleThresholdMinutes, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 56)
+                        .multilineTextAlignment(.center)
+                    Text("min")
+                        .foregroundStyle(.secondary)
                 }
             }
 
@@ -98,45 +122,6 @@ struct SettingsView: View {
                     Text("History not available")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                }
-            }
-
-            Section("Diagnostics") {
-                Toggle("Show raw capture in popover", isOn: $appModel.showRawCapture)
-
-                LabeledContent("Claude working dir") {
-                    Text(appModel.claudeWorkingDirectoryDescription)
-                        .font(.caption.monospaced())
-                        .multilineTextAlignment(.trailing)
-                        .textSelection(.enabled)
-                }
-
-                Button("Run capture now") {
-                    Task {
-                        await viewModel.refresh(forceVisibleLoading: true)
-                    }
-                }
-
-                if let errorMessage = viewModel.claudeLastErrorMessage {
-                    Text(errorMessage)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-
-                if appModel.showRawCapture {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Raw capture")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
-
-                        ScrollView {
-                            Text(viewModel.claudeDiagnosticsText.isEmpty ? "No capture text yet." : viewModel.claudeDiagnosticsText)
-                                .font(.system(.caption, design: .monospaced))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .textSelection(.enabled)
-                        }
-                        .frame(minHeight: 120)
-                    }
                 }
             }
         }
