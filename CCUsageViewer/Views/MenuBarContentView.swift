@@ -102,17 +102,53 @@ struct MenuBarContentView: View {
                 }
             }
         } else if viewModel.isRefreshing {
-            ProgressView("Refreshing…")
-                .frame(maxWidth: .infinity, alignment: .leading)
-        } else if let message = viewModel.claudeLastErrorMessage {
-            Text(message)
-                .font(.callout)
-                .foregroundStyle(.secondary)
+            VStack(spacing: 12) {
+                ProgressView()
+                    .controlSize(.small)
+                Text("Loading usage data…")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 20)
         } else {
-            Text("Run a capture to read Claude subscription limits.")
-                .font(.callout)
-                .foregroundStyle(.secondary)
+            emptyStateView
         }
+    }
+
+    // MARK: - Empty State
+
+    private var emptyStateView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "gauge.open.with.lines.needle.33percent")
+                .font(.system(size: 32))
+                .foregroundStyle(.secondary.opacity(0.5))
+
+            VStack(spacing: 6) {
+                Text("No usage data yet")
+                    .font(.headline)
+                    .foregroundStyle(.secondary)
+
+                if viewModel.claudeLastErrorMessage != nil {
+                    Text("Could not load data. Connect to Claude.ai API or check that Claude CLI is installed.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                } else {
+                    Text("Connect to Claude.ai API in Settings or install Claude CLI to get started.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+            }
+
+            Button("Open Settings") {
+                openWindow(id: "settings")
+            }
+            .controlSize(.small)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 20)
     }
 
     // MARK: - Footer
