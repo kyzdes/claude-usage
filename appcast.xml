@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+        <title>CC Usage Viewer</title>
+        <link>https://cc-usage-widget.com</link>
+        <description>Updates for CC Usage Viewer</description>
+        <language>en</language>
+        <item>
+            <title>Version 1.0.10</title>
+            <sparkle:version>10</sparkle:version>
+            <sparkle:shortVersionString>1.0.10</sparkle:shortVersionString>
+            <description>
+                <![CDATA[
+                <h2>CC Usage Viewer 1.0.10</h2>
+                <ul>
+                    <li>Rebuilt Analytics dashboard — insights, weekly pacing, model mix, peak-usage windows, consistency score, source split</li>
+                    <li>Resilient Claude.ai login — survives Cloudflare challenges via a hidden WebKit bridge and restores existing browser sessions</li>
+                    <li>Unified user-facing errors with clear recovery steps</li>
+                    <li>Fixed truncated "100%" label in the menu bar widget</li>
+                    <li>Product telemetry foundation for refresh, tab and settings events</li>
+                </ul>
+                ]]>
+            </description>
+            <pubDate>Wed, 29 Apr 2026 12:00:09 +0300</pubDate>
+            <enclosure
+                url="https://github.com/kyzdes/claude-usage/releases/download/v1.0.10/CCUsageViewer.zip"
+                length="4758935"
+                type="application/octet-stream"
+                sparkle:edSignature="cb0s71A5bH1MqYeIKyXFxkUlxubj5xjpTOq69A7tsMemMEkFB+lVxKD32MBqLeYgTyL7MMCQE+rWTIXQ21Q8Aw=="
+            />
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+        </item>
+        <item>
+            <title>Version 1.0.7</title>
+            <sparkle:version>8</sparkle:version>
+            <sparkle:shortVersionString>1.0.7</sparkle:shortVersionString>
+            <description>
+                <![CDATA[
+                <h2>CC Usage Viewer 1.0.7</h2>
+                <ul>
+                    <li>Removed the "Usage Insights" card from the Overview tab — signals now live in the richer Analytics tab</li>
+                    <li>Under-the-hood refinements</li>
+                </ul>
+                ]]>
+            </description>
+            <pubDate>Tue, 21 Apr 2026 19:42:42 +0300</pubDate>
+            <enclosure
+                url="https://github.com/kyzdes/claude-usage/releases/download/v1.0.7/CCUsageViewer.zip"
+                length="4757118"
+                type="application/octet-stream"
+                sparkle:edSignature="COvOR0Ns67hoay7oZC/GNzwWyqZ/b4HMmR6ToT9C094vyR+sVBB4gYxSUMmeEup9U2eX0UH2isu9uUvxe3V/DA=="
+            />
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+        </item>
+        <item>
+            <title>Version 1.0.6</title>
+            <sparkle:version>7</sparkle:version>
+            <sparkle:shortVersionString>1.0.6</sparkle:shortVersionString>
+            <description>
+                <![CDATA[
+                <h2>CC Usage Viewer 1.0.6</h2>
+                <ul>
+                    <li>Main window opens automatically on launch</li>
+                    <li>Crash feedback dialog</li>
+                    <li>Report Issue button in Settings</li>
+                </ul>
+                ]]>
+            </description>
+            <pubDate>Mon, 13 Apr 2026 18:29:02 +0300</pubDate>
+            <enclosure
+                url="https://github.com/kyzdes/claude-usage/releases/download/v1.0.6/CCUsageViewer.zip"
+                length="4503011"
+                type="application/octet-stream"
+                sparkle:edSignature="kW/IB0Y+bEgw2FfcRdj3dfYB4PVaKdXVP63Ku2QX90bMln5ousbY4FRaMsgyTp3L9MWgK/SF2bSe+lMuEhTHBA=="
+            />
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+        </item>
+        <item>
+            <title>Version 1.0.5</title>
+            <sparkle:version>6</sparkle:version>
+            <sparkle:shortVersionString>1.0.5</sparkle:shortVersionString>
+            <description>
+                <![CDATA[
+                <h2>CC Usage Viewer 1.0.5</h2>
+                <ul>
+                    <li>Auth funnel tracking</li>
+                    <li>Extended error reporting</li>
+                </ul>
+                ]]>
+            </description>
+            <pubDate>Mon, 13 Apr 2026 18:13:32 +0300</pubDate>
+            <enclosure
+                url="https://github.com/kyzdes/claude-usage/releases/download/v1.0.5/CCUsageViewer.zip"
+                length="4488102"
+                type="application/octet-stream"
+                sparkle:edSignature="D2gG/Yfv92OYLn5NeylsXyEfQOOXSBt+XySLpmwBwdfM+JIeZ5tdPUVpFhbF2lDNheRTIP20vHchbnfwIlzbBQ=="
+            />
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+        </item>
+    </channel>
+</rss>
