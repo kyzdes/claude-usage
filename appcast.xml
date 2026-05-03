@@ -6,6 +6,30 @@
         <description>Updates for CC Usage Viewer</description>
         <language>en</language>
         <item>
+            <title>Version 1.0.11</title>
+            <sparkle:version>11</sparkle:version>
+            <sparkle:shortVersionString>1.0.11</sparkle:shortVersionString>
+            <description>
+                <![CDATA[
+                <h2>CC Usage Viewer 1.0.11</h2>
+                <ul>
+                    <li>Fix: prevent double-resume in the Claude.ai browser-session bridge under racing refreshes</li>
+                    <li>Auth events now route through unified Sentry breadcrumbs for cleaner crash context</li>
+                    <li>Backend URL is now overridable via <code>CC_USAGE_BACKEND_URL</code> env or <code>BackendBaseURL</code> UserDefault (default unchanged)</li>
+                    <li>Internal refactor of AnalyticsEngine, LimitViewModel, and AppWindowCoordinator for maintainability</li>
+                </ul>
+                ]]>
+            </description>
+            <pubDate>Sun, 03 May 2026 16:45:45 +0300</pubDate>
+            <enclosure
+                url="https://github.com/kyzdes/claude-usage/releases/download/v1.0.11/CCUsageViewer.zip"
+                length="4744037"
+                type="application/octet-stream"
+                sparkle:edSignature="c01oc8AIhbStOiE9ERpO2ed0731H0V62uQetejv6GhJS6fazhe+izOusPxv6J9d9xATVyV8TOnFlBCQtzSYpDQ=="
+            />
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+        </item>
+        <item>
             <title>Version 1.0.10</title>
             <sparkle:version>10</sparkle:version>
             <sparkle:shortVersionString>1.0.10</sparkle:shortVersionString>
