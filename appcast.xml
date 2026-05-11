@@ -6,6 +6,30 @@
         <description>Updates for CC Usage Viewer</description>
         <language>en</language>
         <item>
+            <title>Version 1.0.13</title>
+            <sparkle:version>13</sparkle:version>
+            <sparkle:shortVersionString>1.0.13</sparkle:shortVersionString>
+            <description>
+                <![CDATA[
+                <h2>CC Usage Viewer 1.0.13</h2>
+                <ul>
+                    <li><strong>Product analytics SDK</strong> — 10 events captured to a local queue and batch-uploaded to our own privacy-first backend. Covers launch, activation funnel, value moments (notifications, force-poll), reliability (refresh outcome, push latency), and 5-min engagement heartbeat. No third-party trackers; events stored under our control.</li>
+                    <li><strong>Settings → Account → «Send anonymous usage analytics»</strong> — default ON with disclosure. Toggle off wipes the local queue instantly.</li>
+                    <li>Fix: refresh-token rotation — the previous build only stored the new access token; the next refresh used the revoked refresh and forced a logout. Fixed — rotated refresh now persists.</li>
+                    <li>macOS CI on GitHub Actions now runs <code>xcodebuild build</code> on every push; <code>@preconcurrency</code> on UserNotifications for SDK 15.5 compat.</li>
+                </ul>
+                ]]>
+            </description>
+            <pubDate>Mon, 11 May 2026 14:08:49 +0300</pubDate>
+            <enclosure
+                url="https://github.com/kyzdes/claude-usage/releases/download/v1.0.13/CCUsageViewer.zip"
+                length="5047321"
+                type="application/octet-stream"
+                sparkle:edSignature="ehhALL6z/A7L2anOp2MGnASsEx8IuP/v1LPXhgzbveivgcMIRPzoPFa7PtA5rgaUq/u0XyqPhfM6tsVB35c0Ag=="
+            />
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+        </item>
+        <item>
             <title>Version 1.0.12</title>
             <sparkle:version>12</sparkle:version>
             <sparkle:shortVersionString>1.0.12</sparkle:shortVersionString>
