@@ -6,6 +6,28 @@
         <description>Updates for CC Usage Viewer</description>
         <language>en</language>
         <item>
+            <title>Version 1.0.14</title>
+            <sparkle:version>14</sparkle:version>
+            <sparkle:shortVersionString>1.0.14</sparkle:shortVersionString>
+            <description>
+                <![CDATA[
+                <h2>CC Usage Viewer 1.0.14</h2>
+                <ul>
+                    <li><strong>Hotfix</strong> — fixes a startup crash on fresh installs and accounts with no synced history yet. <code>AnalyticsEngine.heatmap(from:)</code> was tripping Swift's <code>Range requires lowerBound &lt;= upperBound</code> trap when the local sample store was empty.</li>
+                    <li>Recommend installing immediately if you've seen the "CC Usage Viewer crashed last time" dialog after upgrading to 1.0.13.</li>
+                </ul>
+                ]]>
+            </description>
+            <pubDate>Tue, 12 May 2026 13:39:51 +0300</pubDate>
+            <enclosure
+                url="https://github.com/kyzdes/claude-usage/releases/download/v1.0.14/CCUsageViewer.zip"
+                length="5047015"
+                type="application/octet-stream"
+                sparkle:edSignature="wjcs0JsgSMD6W/Gpq3tbuWSZ0bbyTl6PiUprmoY+YW7XTYy5PefJrJjWfD08udizBpAqa+be+tXaLSWPhzEKAQ=="
+            />
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+        </item>
+        <item>
             <title>Version 1.0.13</title>
             <sparkle:version>13</sparkle:version>
             <sparkle:shortVersionString>1.0.13</sparkle:shortVersionString>
