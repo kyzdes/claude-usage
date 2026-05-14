@@ -6,6 +6,28 @@
         <description>Updates for CC Usage Viewer</description>
         <language>en</language>
         <item>
+            <title>Version 1.0.15</title>
+            <sparkle:version>15</sparkle:version>
+            <sparkle:shortVersionString>1.0.15</sparkle:shortVersionString>
+            <description>
+                <![CDATA[
+                <h2>CC Usage Viewer 1.0.15</h2>
+                <ul>
+                    <li><strong>Fix random sign-outs every ~15 min during active sync.</strong> Multiple services hitting an expired access token at the same time used to fire parallel <code>/auth/refresh</code> calls; the backend treated the second one as token reuse and revoked the whole session chain. Now a single in-flight refresh is shared by all callers.</li>
+                    <li>Transient backend errors (5xx, network blips) during refresh no longer sign you out — only an explicit 401 does. Your backend account now stays signed in for the full refresh-token lifetime.</li>
+                </ul>
+                ]]>
+            </description>
+            <pubDate>Thu, 14 May 2026 10:11:57 +0300</pubDate>
+            <enclosure
+                url="https://github.com/kyzdes/claude-usage/releases/download/v1.0.15/CCUsageViewer.zip"
+                length="5050257"
+                type="application/octet-stream"
+                sparkle:edSignature="b2i/hsWOoNHjAEe5NpaXCRjT5AP2MLAsNvUxnisTIls5FxzN9rom98iCMPeyNCw8CXB3ksXkT+C1Ee5QA/9fAw=="
+            />
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+        </item>
+        <item>
             <title>Version 1.0.14</title>
             <sparkle:version>14</sparkle:version>
             <sparkle:shortVersionString>1.0.14</sparkle:shortVersionString>
