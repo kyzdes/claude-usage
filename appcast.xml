@@ -6,6 +6,29 @@
         <description>Updates for CC Usage Viewer</description>
         <language>en</language>
         <item>
+            <title>Version 1.0.16</title>
+            <sparkle:version>16</sparkle:version>
+            <sparkle:shortVersionString>1.0.16</sparkle:shortVersionString>
+            <description>
+                <![CDATA[
+                <h2>CC Usage Viewer 1.0.16</h2>
+                <ul>
+                    <li><strong>Settings refresh.</strong> Replaced the legacy Developer / Profile-tab toggle with <strong>Open at login</strong> in <em>Settings &rarr; Appearance</em>. Backed by <code>SMAppService</code>, so the OS is the source of truth.</li>
+                    <li><strong>Faster, hang-free launch.</strong> SwiftData stores and Sparkle no longer block the main actor during <code>App.init</code> &mdash; App-Hang reports tracking &ge; 2 s pauses on launch should drop to zero. (KYZ-5)</li>
+                    <li><strong>Cloudflare resilience.</strong> Tightened challenge detection, promoted the WebKit bridge to the primary fetch path, and added exponential backoff after consecutive CF blocks (30 s &rarr; 60 s &rarr; &hellip; &rarr; 30 min) instead of rapid-retrying. (KYZ-6)</li>
+                </ul>
+                ]]>
+            </description>
+            <pubDate>Tue, 19 May 2026 18:36:58 +0300</pubDate>
+            <enclosure
+                url="https://github.com/kyzdes/claude-usage/releases/download/v1.0.16/CCUsageViewer.zip"
+                length="5070482"
+                type="application/octet-stream"
+                sparkle:edSignature="JjkkathXiw63GvXa8nSHLEUN2UiuTNx4kB/pwVHsKwNJksXQBu2hOnryrl1fP58OLYcjwDDLzF70CgvhivlfDQ=="
+            />
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+        </item>
+        <item>
             <title>Version 1.0.15</title>
             <sparkle:version>15</sparkle:version>
             <sparkle:shortVersionString>1.0.15</sparkle:shortVersionString>
