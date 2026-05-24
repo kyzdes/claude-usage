@@ -6,6 +6,27 @@
         <description>Updates for CC Usage Viewer</description>
         <language>en</language>
         <item>
+            <title>Version 1.0.17</title>
+            <sparkle:version>17</sparkle:version>
+            <sparkle:shortVersionString>1.0.17</sparkle:shortVersionString>
+            <description>
+                <![CDATA[
+                <h2>CC Usage Viewer 1.0.17</h2>
+                <ul>
+                    <li><strong>Another sign-out fix (follow-up to 1.0.15).</strong> Opening your profile during a brief network or Cloudflare hiccup could still sign you out, even though your session was perfectly valid. The profile screen no longer discards a valid session on a transient <code>/auth/refresh</code> failure &mdash; only a real authentication rejection (401) signs you out.</li>
+                </ul>
+                ]]>
+            </description>
+            <pubDate>Sun, 24 May 2026 16:54:26 +0300</pubDate>
+            <enclosure
+                url="https://github.com/kyzdes/claude-usage/releases/download/v1.0.17/CCUsageViewer.zip"
+                length="5070599"
+                type="application/octet-stream"
+                sparkle:edSignature="VkfJU0cXQlV/HX/FOMKTc+e6EzO8e3CXvebLgpqePdZG6aEiBPkGv52t8O0xbwiqN0zOSogPYBKujTFT1NGIAA=="
+            />
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+        </item>
+        <item>
             <title>Version 1.0.16</title>
             <sparkle:version>16</sparkle:version>
             <sparkle:shortVersionString>1.0.16</sparkle:shortVersionString>
