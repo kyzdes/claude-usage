@@ -6,12 +6,12 @@
         <description>Updates for CC Usage Viewer</description>
         <language>en</language>
         <item>
-            <title>Version 1.0.18</title>
-            <sparkle:version>18</sparkle:version>
-            <sparkle:shortVersionString>1.0.18</sparkle:shortVersionString>
+            <title>Version 2.0.0</title>
+            <sparkle:version>19</sparkle:version>
+            <sparkle:shortVersionString>2.0.0</sparkle:shortVersionString>
             <description>
                 <![CDATA[
-                <h2>CC Usage Viewer 1.0.18</h2>
+                <h2>CC Usage Viewer 2.0.0</h2>
                 <ul>
                     <li><strong>The Great Simplification.</strong> CC Usage Viewer is now a focused menu-bar app that shows your current Claude usage — session %, weekly %, burn rate, and per-model limits — read straight from Claude.ai.</li>
                     <li>Removed the account layer: no more sign-in, cloud sync, device registration, background server polling, or the Analytics tab. No account needed — nothing about your usage leaves your Mac.</li>
@@ -20,11 +20,11 @@
                 </ul>
                 ]]>
             </description>
-            <pubDate>Sat, 11 Jul 2026 19:02:53 +0300</pubDate>
+            <pubDate>Sat, 11 Jul 2026 19:16:31 +0300</pubDate>
             <enclosure
-                url="https://github.com/kyzdes/claude-usage/releases/download/v1.0.18/CCUsageViewer.zip"
+                url="https://github.com/kyzdes/claude-usage/releases/download/v2.0.0/CCUsageViewer.zip"
                 type="application/octet-stream"
-                sparkle:edSignature="5BTU8kDe6cjWMlo/YeqED5mV/UJ9cZGMrrHlHui5wXKD9C5b+qvEP3JTjqW9h4SjS7JFerxpxd8rDlGBQOLbCA==" length="4371684"
+                sparkle:edSignature="clfLVoMH4oqTSuYHgfAoAi5vxnevNSajNIm/bMMdpOE+gGzqMr/riu1XkCKw0JnIjkyhaNAS/uKvj1B2nYpTCg==" length="4371691"
             />
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
         </item>
